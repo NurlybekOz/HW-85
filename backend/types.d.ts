@@ -19,6 +19,7 @@ export interface ITrack {
     title: string;
     album: Album;
     duration: string;
+    trackCount: number;
 }
 export interface TrackWithoutId {
     title: string;

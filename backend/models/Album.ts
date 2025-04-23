@@ -23,7 +23,7 @@ const AlbumSchema = new Schema({
 
     },
     createdDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     image: String,
