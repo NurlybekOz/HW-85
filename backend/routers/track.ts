@@ -9,7 +9,7 @@ const trackRouter = express.Router();
 trackRouter.get('/', async (req, res, next) => {
     try {
         const queryAlbum = req.query.album as string;
-        let tracks = await Track.find();
+        let tracks = await Track.find().sort('trackCount');
         if (queryAlbum) {
             tracks = tracks.filter(track => track.album.toString() === queryAlbum);
         }
@@ -29,6 +29,7 @@ trackRouter.post('/', async (req, res, next) => {
             title: req.body.title,
             album: req.body.album,
             duration: req.body.duration,
+            trackCount: req.body.trackCount
         }
         const track = new Track(newTrack);
         await track.save();

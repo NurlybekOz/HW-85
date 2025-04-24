@@ -1,16 +1,16 @@
 
 import express from "express";
 import {Error} from 'mongoose';
-import {AlbumWithoutId, IAlbum} from "../types";
+import {AlbumWithoutId} from "../types";
 import Album from "../models/Album";
-import {imagesUpload} from "../multer";
+import {imagesUpload} from "../middleware/multer";
 
 const albumRouter = express.Router();
 
 albumRouter.get('/', async (req, res, next) => {
     try {
         const queryArtist = req.query.artist as string;
-        let albums = await Album.find();
+        let albums = await Album.find().sort('-createdDate');
         if (queryArtist) {
             albums = albums.filter(album => album.artist.toString() === queryArtist);
         }

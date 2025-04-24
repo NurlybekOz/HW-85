@@ -2,7 +2,7 @@ import express from "express";
 import {Error} from 'mongoose';
 import Artist from "../models/Artist";
 import {IArtist} from "../types";
-import {imagesUpload} from "../multer";
+import {imagesUpload} from "../middleware/multer";
 
 const artistRouter = express.Router();
 
@@ -10,6 +10,21 @@ artistRouter.get('/', async (req, res, next) => {
     try {
         const artists = await Artist.find();
         res.send(artists);
+    } catch (e) {
+        next(e);
+    }
+});
+artistRouter.get('/:id', async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const artist = await Artist.findById(id)
+
+
+        if (!artist) {
+            res.sendStatus(404)
+            return;
+        }
+        res.send(artist)
     } catch (e) {
         next(e);
     }
