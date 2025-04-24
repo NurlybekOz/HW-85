@@ -28,17 +28,6 @@ const TrackSchema = new Schema({
     }
 })
 
-TrackSchema.pre('save', async function(next) {
-    if (!this.album) return next();
-
-    const tracks = await Track.find({album: this.album}).sort('trackCount');
-    if (tracks.length === 0) {
-        this.trackCount = 1;
-    } else {
-        this.trackCount = tracks[tracks.length - 1].trackCount + 1;
-    }
-    next();
-});
 
 const Track = mongoose.model<ITrack>('Track', TrackSchema);
 export default Track;

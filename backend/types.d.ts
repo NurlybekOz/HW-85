@@ -25,6 +25,8 @@ export interface TrackWithoutId {
     title: string;
     album: string;
     duration: string;
+    trackCount: number;
+
 }
 export interface UserFields {
     username: string;
