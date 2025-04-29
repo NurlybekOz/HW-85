@@ -1,9 +1,11 @@
-import {AppBar, Container, styled, Toolbar, Typography} from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import {AppBar, Container, Grid, styled, Toolbar, Typography} from "@mui/material";
+import {NavLink} from "react-router-dom";
+import UserMenu from "./UserMenu.tsx";
+import { useAppSelector } from "../../app/hooks.ts";
+import { selectUser } from "../../features/users/UserSlice.ts";
+import AnonymousMenu from "./UserAnonymous.tsx";
 
-
-
-const LinkCustom = styled(NavLink)({
+const Link = styled(NavLink)({
     color: 'inherit',
     textDecoration: 'none',
     '&:hover': {
@@ -11,23 +13,27 @@ const LinkCustom = styled(NavLink)({
     },
 });
 
-
-
 const AppToolbar = () => {
+    const user = useAppSelector(selectUser)
     return (
-        <AppBar position="sticky" color='success'>
+        <AppBar position="sticky" color='success' sx={{mb: 2}}>
             <Toolbar>
-                <Container>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                        <LinkCustom to="/">Music</LinkCustom>
-                    </Typography>
+                <Container maxWidth="xl">
+                    <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+                        <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                            <Link to="/">Music</Link>
+                        </Typography>
+                        {user ?
+                            (<UserMenu user={user}></UserMenu>) :
+                            (<AnonymousMenu/>)
+                        }
+
+                    </Grid>
                 </Container>
             </Toolbar>
         </AppBar>
     );
-
 };
-
 
 
 export default AppToolbar;
