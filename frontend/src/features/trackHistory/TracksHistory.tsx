@@ -1,31 +1,22 @@
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import Spinner from '../../UI/Spinner/Spinner.tsx';
-import {Button, Grid, ListItem, Typography} from '@mui/material';
+import {Grid, ListItem, Typography} from '@mui/material';
 import {useEffect} from "react";
-import { useParams} from "react-router-dom";
-import {selectTrackLoading, selectTracks} from "./trackSlice.ts";
-import {fetchAllTracks} from "./trackThunk.ts";
-import {fetchAlbumById} from "../albums/albumThunk.ts";
 import {selectAlbumById} from "../albums/albumSlice.ts";
 import {fetchArtistById} from "../artists/artistThunk.ts";
-import {selectArtistById} from "../artists/artistSlice.ts";
-import {addTrackToHistory} from "../trackHistory/trackHistoryThunk.ts";
+import {selectTracksHistory, selectTracksHistoryLoading} from "./trackHistorySlice.ts";
+import {fetchTrackHistory} from "./trackHistoryThunk.ts";
 
-const Track = () => {
-    const {id} = useParams();
+const TrackHistory = () => {
     const dispatch = useAppDispatch()
-    const tracks = useAppSelector(selectTracks)
-    const loading = useAppSelector(selectTrackLoading)
+    const tracks = useAppSelector(selectTracksHistory)
+    const loading = useAppSelector(selectTracksHistoryLoading)
     const album = useAppSelector(selectAlbumById)
-    const artist = useAppSelector(selectArtistById)
 
 
     useEffect(() => {
-        if (id) {
-            dispatch(fetchAllTracks(id))
-            dispatch(fetchAlbumById(id))
-        }
-    }, [id, dispatch])
+        dispatch(fetchTrackHistory())
+    },  [dispatch])
 
     useEffect(() => {
         if (album) {
@@ -40,27 +31,19 @@ const Track = () => {
                 (tracks.length === 0 ?
                         <Typography variant='h4' color='textDisabled' mt={2}>No tracks</Typography> :
                         <Grid container direction='column' spacing={3} mt={2}>
-                            {album && artist &&
-                                <Typography variant='h4' fontWeight='bold' align="center">
-                                    {artist.name} - {album.title}
-                                </Typography>
-                            }
 
                             {tracks.map((track, index) => {
 
                                 return (
                                     <ListItem key={index} style={{ display: "flex", flexDirection: "column", border: '1px solid green', width: '20%', marginBottom: '10px', gap: '20px' }}>
-
                                         <Grid sx={{ flexGrow: '1' }}>
                                             <Typography variant='h5' fontWeight='bold'>
-                                                {track.title}
+                                                {track.track.album.artist.name}
+                                            </Typography>
+                                            <Typography variant='caption' fontWeight='bold'>
+                                                {track.track.title} - {track.datetime}
                                             </Typography>
                                         </Grid>
-
-                                        <Typography variant='caption' fontWeight='bold'>
-                                            {track.duration} - {track.trackCount}
-                                        </Typography>
-                                        <Button onClick={() => dispatch(addTrackToHistory(track._id))}>Play</Button>
                                     </ListItem>
                                 );
                             })}
@@ -70,4 +53,4 @@ const Track = () => {
     );
 };
 
-export default Track;
+export default TrackHistory;
