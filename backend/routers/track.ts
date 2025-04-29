@@ -4,6 +4,7 @@ import {Error} from 'mongoose';
 import Track from "../models/Track";
 import {TrackWithoutId} from "../types";
 
+
 const trackRouter = express.Router();
 
 trackRouter.get('/', async (req, res, next) => {
@@ -14,6 +15,21 @@ trackRouter.get('/', async (req, res, next) => {
             tracks = tracks.filter(track => track.album.toString() === queryAlbum);
         }
         res.send(tracks);
+    } catch (e) {
+        next(e);
+    }
+});
+trackRouter.get('/:id', async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const track = await Track.findById(id)
+
+
+        if (!track) {
+            res.sendStatus(404)
+            return;
+        }
+        res.send(track)
     } catch (e) {
         next(e);
     }

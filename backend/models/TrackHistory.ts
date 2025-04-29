@@ -9,11 +9,13 @@ const TrackHistory = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        validator: async (value: string) => {
-            const user = await User.findById(value)
-            return !!(user);
-        },
-        message: 'user not found',
+        validate: {
+            validator: async (value: string) => {
+                const user = await User.findById(value)
+                return !!(user);
+            },
+            message: 'User not found',
+        }
     },
     track: {
         type: Schema.Types.ObjectId,

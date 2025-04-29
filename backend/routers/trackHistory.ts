@@ -21,13 +21,42 @@ trackHistory.post('/', async (req, res) => {
     }
 
     const newTrackHistory = {
-        user: user.id,
         track: req.body.track,
+        user: user._id,
         datetime: new Date(),
     }
     const trackHistory = new TrackHistory(newTrackHistory);
     await trackHistory.save();
     res.send(trackHistory);
+})
+
+trackHistory.get('/', async (req, res) => {
+    const token = req.get('Authorization');
+    if (!token) {
+        res.status(401).send({error: 'No token provided'});
+        return;
+    }
+    const user = await User.findOne({token});
+
+    if (!user) {
+        res.status(401).send({error: 'Wrong token'});
+        return;
+    }
+
+    const tracksHistory = await TrackHistory.find({ user: user._id })
+        .populate({
+            path: 'track',
+            populate: {
+                path: 'album',
+                populate: {
+                    path: 'artist',
+                    select: 'name'
+                }
+            }
+        });
+
+    res.send(tracksHistory);
+
 })
 
 export default trackHistory
