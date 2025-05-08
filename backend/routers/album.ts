@@ -1,9 +1,9 @@
 
 import express from "express";
 import {Error} from 'mongoose';
-import {AlbumWithoutId} from "../types";
 import Album from "../models/Album";
 import {imagesUpload} from "../middleware/multer";
+import User from "../models/User";
 
 const albumRouter = express.Router();
 
@@ -29,11 +29,22 @@ albumRouter.get('/:id', async (req, res, next) => {
 });
 albumRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
     try {
-        if (!req.body.title || !req.body.createdDate) {
-            res.status(404).send('Fill all required fields');
+        const token = req.get('Authorization');
+
+        if (!token) {
+            res.status(401).send({error: 'No token provided'});
             return;
         }
-        const newAlbum: AlbumWithoutId = {
+
+        const user = await User.findOne({token});
+
+        if (!user) {
+            res.status(401).send({error: 'Wrong token'});
+            return;
+        }
+
+
+        const newAlbum = {
             title: req.body.title,
             artist: req.body.artist,
             createdDate: req.body.createdDate,

@@ -2,7 +2,7 @@
 import express from "express";
 import {Error} from 'mongoose';
 import Track from "../models/Track";
-import {TrackWithoutId} from "../types";
+import User from "../models/User";
 
 
 const trackRouter = express.Router();
@@ -36,12 +36,28 @@ trackRouter.get('/:id', async (req, res, next) => {
 });
 trackRouter.post('/', async (req, res, next) => {
     try {
+
+        const token = req.get('Authorization');
+
+        if (!token) {
+            res.status(401).send({error: 'No token provided'});
+            return;
+        }
+
+        const user = await User.findOne({token});
+
+        if (!user) {
+            res.status(401).send({error: 'Wrong token'});
+            return;
+        }
+        console.log(req.body)
+
         if (!req.body.title || !req.body.album || !req.body.duration) {
             res.status(404).send('Fill all required fields');
             return;
         }
 
-        const newTrack: TrackWithoutId = {
+        const newTrack = {
             title: req.body.title,
             album: req.body.album,
             duration: req.body.duration,

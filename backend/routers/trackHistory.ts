@@ -53,7 +53,7 @@ trackHistory.get('/', async (req, res) => {
                     select: 'name'
                 }
             }
-        });
+        }).sort('-datetime');
 
     res.send(tracksHistory);
 

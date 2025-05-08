@@ -7,6 +7,7 @@ import trackRouter from "./routers/track";
 import usersRouter from "./routers/users";
 import TrackHistory from "./routers/trackHistory";
 import config from "./config";
+import adminRouter from "./routers/admin";
 
 const app = express();
 const port = 8000;
@@ -19,6 +20,7 @@ app.use('/albums', albumRouter)
 app.use('/tracks', trackRouter)
 app.use('/users', usersRouter)
 app.use('/track_history', TrackHistory)
+app.use('/admin', adminRouter)
 
 
 const run = async () => {
