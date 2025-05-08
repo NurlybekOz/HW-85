@@ -25,7 +25,11 @@ const TrackSchema = new Schema({
     trackCount: {
         type: Number,
         required: true,
-    }
+    },
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 

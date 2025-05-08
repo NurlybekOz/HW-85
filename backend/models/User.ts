@@ -37,6 +37,12 @@ const UserSchema = new mongoose.Schema<
             message: "This username is already taken"
         }
     },
+    role: {
+        type: String,
+        required: true,
+        default: 'user',
+        enum: ['user', 'admin'],
+    },
     password: {
         type: String,
         required: true,
