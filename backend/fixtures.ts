@@ -13,6 +13,7 @@ const run = async() => {
     const db = mongoose.connection;
 
     try {
+        await db.dropCollection('users');
         await db.dropCollection('artists');
         await db.dropCollection('albums');
         await db.dropCollection('tracks');

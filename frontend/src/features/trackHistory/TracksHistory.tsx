@@ -6,6 +6,7 @@ import {selectAlbumById} from "../albums/albumSlice.ts";
 import {fetchArtistById} from "../artists/artistThunk.ts";
 import {selectTracksHistory, selectTracksHistoryLoading} from "./trackHistorySlice.ts";
 import {fetchTrackHistory} from "./trackHistoryThunk.ts";
+import dayjs from "dayjs";
 
 const TrackHistory = () => {
     const dispatch = useAppDispatch()
@@ -41,7 +42,8 @@ const TrackHistory = () => {
                                                 {track.track.album.artist.name}
                                             </Typography>
                                             <Typography variant='caption' fontWeight='bold'>
-                                                {track.track.title} - {track.datetime}
+                                                {track.track.title} - {dayjs(track.datetime).format('DD.MM.YYYY HH:mm')}
+
                                             </Typography>
                                         </Grid>
                                     </ListItem>

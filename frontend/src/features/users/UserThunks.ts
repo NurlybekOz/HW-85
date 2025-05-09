@@ -2,6 +2,7 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import {GlobalError, LoginMutation, RegisterMutation, User, ValidationError} from "../../types";
 import axiosApi from "../../axiosApi.ts";
 import {isAxiosError} from "axios";
+import {RootState} from "../../app/store.ts";
 
 export interface RegisterAndLoginResponse {
     user: User;
@@ -45,5 +46,16 @@ export const login = createAsyncThunk<
 
         }
 
+    }
+)
+export const logout = createAsyncThunk<
+    void,
+    void,
+    {state: RootState}
+>(
+    'users/logout',
+    async (_, {getState}) => {
+        const token = getState().users.user?.token;
+        await axiosApi.delete('/users/sessions', {headers: {Authorization: token}});
     }
 )
