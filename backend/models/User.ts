@@ -7,7 +7,9 @@ interface UserMethods {
     checkPassword: (password: string) => Promise<boolean>;
     generateToken(): void;
 }
-
+interface UserVirtuals {
+    confirmPassword: string;
+}
 const ARGON2_OPTIONS = {
     type: argon2.argon2id,
     memoryCost: 2 ** 16,
@@ -22,7 +24,8 @@ const UserSchema = new mongoose.Schema<
     HydratedDocument<UserFields>,
     UserModel,
     UserMethods,
-    {}
+    {},
+    UserVirtuals
 >({
     username: {
         type: String,
@@ -34,8 +37,12 @@ const UserSchema = new mongoose.Schema<
                 const user: HydratedDocument<UserFields> | null = await User.findOne({username: value});
                 return !user;
             },
-            message: "This username is already taken"
+            message: "This is username is already taken"
         }
+    },
+    password: {
+        type: String,
+        required: true,
     },
     role: {
         type: String,
@@ -43,13 +50,26 @@ const UserSchema = new mongoose.Schema<
         default: 'user',
         enum: ['user', 'admin'],
     },
-    password: {
-        type: String,
-        required: true,
-    },
+    image: { type: String },
     token: {
         type: String,
         required: true,
+    },
+    displayName: {
+        type: String,
+        required: true,
+    },
+    googleID: String,
+}, {
+    virtuals: {
+        confirmPassword: {
+            get() {
+                return this.__confirmPassword;
+            },
+            set(confirmPassword: string) {
+                this.__confirmPassword = confirmPassword;
+            }
+        }
     }
 });
 
