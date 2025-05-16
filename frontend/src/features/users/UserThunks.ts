@@ -2,7 +2,6 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import {GlobalError, LoginMutation, RegisterMutation, User, ValidationError} from "../../types";
 import axiosApi from "../../axiosApi.ts";
 import {isAxiosError} from "axios";
-import {RootState} from "../../app/store.ts";
 
 export interface RegisterAndLoginResponse {
     user: User;
@@ -48,14 +47,33 @@ export const login = createAsyncThunk<
 
     }
 )
+
+export const googleLogin = createAsyncThunk<
+    User,
+    string,
+    { rejectValue: GlobalError}
+>(
+    'users/googleLogin',
+    async (credential, {rejectWithValue}) => {
+        try {
+            const response = await axiosApi.post<RegisterAndLoginResponse>('/users/google', {credential});
+            return response.data.user;
+        } catch (error) {
+            if (isAxiosError(error) && error.response && error.response.status === 400) {
+                return rejectWithValue(error.response.data as GlobalError);
+            }
+            throw error;
+
+        }
+
+    }
+)
 export const logout = createAsyncThunk<
     void,
-    void,
-    {state: RootState}
+    void
 >(
     'users/logout',
-    async (_, {getState}) => {
-        const token = getState().users.user?.token;
-        await axiosApi.delete('/users/sessions', {headers: {Authorization: token}});
+    async () => {
+        await axiosApi.delete('/users/sessions');
     }
 )

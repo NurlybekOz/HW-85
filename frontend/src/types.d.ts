@@ -42,12 +42,17 @@ export interface TrackMutation {
 
 export interface RegisterMutation {
     username: string;
+    displayName: string;
+    image: string | null;
     password: string;
+    confirmPassword: string;
 }
 
 export interface User {
     _id: string;
     username: string;
+    displayName: string;
+    image: string;
     role: string;
     token: string;
 }

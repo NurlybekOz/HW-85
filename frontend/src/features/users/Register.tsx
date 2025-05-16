@@ -11,6 +11,7 @@ import {selectRegisterError, selectRegisterLoading } from "./UserSlice.ts";
 import { register } from "./UserThunks.ts";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {toast} from "react-toastify";
+import FileInput from "../../UI/FileInput/FileInput.tsx";
 
 
 const Register = () => {
@@ -20,7 +21,10 @@ const Register = () => {
     const navigate = useNavigate()
     const [form, setForm] = useState<RegisterMutation>({
         username: '',
+        displayName: '',
         password: '',
+        confirmPassword: '',
+        image: '',
     });
 
 
@@ -40,6 +44,13 @@ const Register = () => {
     const onSubmitFormHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
+            if (!form.username.trim() || !form.displayName.trim()) {
+                toast.error("Please enter ur Name and Display Name");
+                return;
+            } else if (!form.password.trim()) {
+                toast.error("Please enter Password");
+                return;
+            }
             await dispatch(register(form)).unwrap();
             toast.success("Registration was successfully!");
             navigate('/')
@@ -48,6 +59,13 @@ const Register = () => {
         }
     };
 
+    const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, files} = e.target
+
+        if (files) {
+            setForm(prevState => ({...prevState, [name]: files[0]}))
+        }
+    }
     return (
         <Box
             sx={{
@@ -65,7 +83,7 @@ const Register = () => {
             </Typography>
             <Box component="form" noValidate onSubmit={onSubmitFormHandler} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
-                    <Grid  size={{xs: 12}}>
+                    <Grid  size={{xs: 6}}>
                         <TextField
                             disabled={registerLoading}
                             fullWidth
@@ -79,7 +97,21 @@ const Register = () => {
                             error={Boolean(getFieldError('username'))}
                         />
                     </Grid>
-                    <Grid size={{xs: 12}}>
+                    <Grid  size={{xs: 6}}>
+                        <TextField
+                            disabled={registerLoading}
+                            fullWidth
+                            id="displayName"
+                            label="Display Name"
+                            name="displayName"
+                            autoComplete="family-name"
+                            value={form.displayName}
+                            onChange={onInputChange}
+                            helperText={getFieldError('displayName')}
+                            error={Boolean(getFieldError('displayName'))}
+                        />
+                    </Grid>
+                    <Grid size={{xs: 6}}>
                         <TextField
                             disabled={registerLoading}
                             fullWidth
@@ -92,6 +124,28 @@ const Register = () => {
                             onChange={onInputChange}
                             helperText={getFieldError('password')}
                             error={Boolean(getFieldError('password'))}
+                        />
+                    </Grid>
+                    <Grid size={{xs: 6}}>
+                        <TextField
+                            disabled={registerLoading}
+                            fullWidth
+                            name="confirmPassword"
+                            label="Confirm Password"
+                            type="password"
+                            id="confirmPassword"
+                            autoComplete="new-password"
+                            value={form.password}
+                            onChange={onInputChange}
+                            helperText={getFieldError('confirmPassword')}
+                            error={Boolean(getFieldError('confirmPassword'))}
+                        />
+                    </Grid>
+                    <Grid size={{sm: 6}}>
+                        <FileInput
+                            name='image'
+                            label='Avatar'
+                            onChange={fileInputChangeHandler}
                         />
                     </Grid>
                 </Grid>

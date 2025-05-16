@@ -31,8 +31,8 @@ const UserMenu: React.FC<Props> = ({user}) => {
     }
     return (
         <>
-            <Button onClick={handleClick} color='inherit'>
-                Hello, {user.username}
+            <Button onClick={handleClick} color='inherit' sx={{display: 'flex', gap: '10px'}}>
+                <span>Hello, {user.displayName} </span> {user.image ? <img src={`${user.image}`} alt='avatar' style={{width: '35px', height: '35px', borderRadius: '50%'}} /> : null}
             </Button>
             <Menu
                 keepMounted
