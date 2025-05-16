@@ -8,10 +8,11 @@ import {Button, Grid, TextField} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import { RegisterMutation } from "../../types";
 import {selectRegisterError, selectRegisterLoading } from "./UserSlice.ts";
-import { register } from "./UserThunks.ts";
+import {googleLogin, register} from "./UserThunks.ts";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {toast} from "react-toastify";
 import FileInput from "../../UI/FileInput/FileInput.tsx";
+import {GoogleLogin} from "@react-oauth/google";
 
 
 const Register = () => {
@@ -59,6 +60,16 @@ const Register = () => {
         }
     };
 
+    const googleRegisterHandler = async (credential: string) => {
+        try {
+            await dispatch(googleLogin(credential)).unwrap();
+            navigate("/");
+            toast.success("Register was successfully!");
+        } catch (e) {
+            console.error(e);
+        }
+
+    }
     const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, files} = e.target
 
@@ -81,6 +92,18 @@ const Register = () => {
             <Typography component="h1" variant="h5">
                 Sign up
             </Typography>
+            <Box sx={{pt: 2}}>
+                <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                        if (credentialResponse.credential) {
+                            void googleRegisterHandler(credentialResponse.credential)
+                        }
+                    }}
+                    onError={() => {
+                        console.log('Register failed')
+                    }}
+                ></GoogleLogin>
+            </Box>
             <Box component="form" noValidate onSubmit={onSubmitFormHandler} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
                     <Grid  size={{xs: 6}}>
